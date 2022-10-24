@@ -40,9 +40,13 @@ brew install python@3.10
 ```
 #### Running the backend service
 ```
-pip3 install requirements.txt
+pip3 install -r requirements.txt
 python3 -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate (for MAC)
+
+OR
+
+.venv/Scripts/activate (for Windows)  
 ```
 You will see that you're in the virtual environment at this point. Notice the 
 ```(.venv) before your command line ```
