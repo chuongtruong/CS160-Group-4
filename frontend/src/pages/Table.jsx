@@ -13,7 +13,7 @@ export const Table = () => {
     return (
         <div className="table-container">
             <div className="table-wrapper">
-                <TableTop/>
+                {/* <TableTop/> */}
                 <TableMid setIsEmpty={setIsEmpty} setIsDetail={setIsDetail}/>
                 {isDetail ? <TableDetail orderList={orderList}/> : <TableLists isEmpty={isEmpty} setIsDetail={setIsDetail} setOrderList={setOrderList}/>}
             </div>
