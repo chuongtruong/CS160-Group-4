@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { InputGroup } from '../components/register/InputGroup'
 import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
-
-export const Login = () => {
+export const Login = ({setUserId}) => {
 
     const navigate = useNavigate();
 
     const [email,setEmail] = useState("");
-    const [username, setUsername] = useState("");
+    const [employeeID, setEmployeeID] = useState("");
     const [password,setPassword] = useState("");
     const [errors,setErrors] = useState({});
     
@@ -16,21 +16,16 @@ export const Login = () => {
 
     // GET user data from database
     const handleSubmit = async (event) => {
-        // event.preventDefault();
-        // try {
-        //     const userData = new FormData()
-        //     userData.append('username',username)
-        //     userData.append('password',password)
-        //     const res = await axios.GET("ROUTE HERE", userData)
-        //     navigate('/admin')
+        event.preventDefault();
+        try {
+            const res = await axios.post("http://127.0.0.1:5000/auth", {employeeID:employeeID,password:password})
+            setUserId(res.data.employeeID)
+            navigate(`/${res.data.employeeID}admin`)
 
-        // } catch(err) {
-        //     console.error(err);
-        //     setErrors(err?.response?.data || {});
-        // }
-
-        
-        navigate('/admin')
+        } catch(err) {
+            console.error(err);
+            setErrors(err?.response?.data || {});
+        }
   }
 
     return (
@@ -40,10 +35,10 @@ export const Login = () => {
                 <h1 className="mb-2 text-lg font-medium">Sign In</h1>
                 <form onSubmit={handleSubmit}>
                     <InputGroup
-                        placeholder='Username'
-                        value={username}
-                        setValue={setUsername}
-                        error={errors.username}
+                        placeholder='Employee ID'
+                        value={employeeID}
+                        setValue={setEmployeeID}
+                        error={errors.employeeID}
                     />
                     <InputGroup
                         placeholder='Password'

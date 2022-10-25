@@ -8,7 +8,7 @@ export const Register = () => {
     const navigate = useNavigate();
 
     const [email,setEmail] = useState("");
-    const [username, setUsername] = useState("");
+    const [employeeID, setEmployeeID] = useState("");
     const [password,setPassword] = useState("");
     const [confirmPass,setConfirmPass] = useState("");
     const [errors,setErrors] = useState({});
@@ -20,15 +20,10 @@ export const Register = () => {
             if(password === confirmPass) {
                 try {
                     // form user data
-                    const userData = new FormData()
-                    userData.append('username',username)
-                    userData.append('password',password)
-    
-                    const res = await axios.post("http://127.0.0.1:5000/register",userData)
+                    const res = await axios.post("http://127.0.0.1:5000/registration",{employeeID:employeeID,password:password})
                     navigate('/login')
         
                 } catch(err) {
-                    console.error(err);
                     setErrors(err?.response?.data || {});
                 }
             } else {
@@ -50,10 +45,10 @@ export const Register = () => {
                         type="email"
                     />
                     <InputGroup
-                        placeholder='Username'
-                        value={username}
-                        setValue={setUsername}
-                        error={errors.username}
+                        placeholder='Employee ID'
+                        value={employeeID}
+                        setValue={setEmployeeID}
+                        error={errors.employeeID}
                         type="text"
                     />
                     <InputGroup
