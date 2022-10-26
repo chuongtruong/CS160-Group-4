@@ -10,6 +10,6 @@ export const TableList = ({name,number,setIsDetail,setOrderList,orderList}) => {
   }
 
   return (
-    <div className={`table-number table-${name}`} onClick={()=>handleClick()}>{number}</div>
+    <div className={`table-number mt-5 md:text-2xl flex items-center justify-center font-bold cursor-pointer md:w-28 md:h-28 rounded-md table-${name}`} onClick={()=>handleClick()}>{number}</div>
   )
 }
