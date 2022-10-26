@@ -184,7 +184,7 @@
 }
 
 
-@media only screen and (min-width: 280px) and (max-width: 1280px) {
+@media only screen and (min-width: 280px) and (max-width: 1248px) {
   .table-wrapper {
     width: 100%;
   }
@@ -227,10 +227,6 @@
     margin:0;
     width: 100%;
     padding: 0 1rem 0 1rem;
-  }
-
-  .order-list {
-    padding:0;
   }
 
   .table-detail-bottom  {
@@ -292,3 +288,21 @@
   }
 }
 
+/* @media only screen and (min-width: 1024px) and (max-width: 1248px) {
+
+  .table-container {
+    height: 100%;
+    margin-top: 30px;
+  }
+
+  .table-detail-name {
+    display:none;
+  }
+
+  .table-detail-bottom  {
+    width: 50%;
+    margin:0;
+    margin-top: 0;
+  }
+
+} */
