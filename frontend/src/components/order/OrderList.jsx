@@ -17,7 +17,7 @@ export const OrderList = ({name,quantity,amount}) => {
             <span>{`$${amount}`}</span>
           </div>
         </div>
-        <div className="border"></div>
+        <div className="order-border"></div>
       </div>
       </>
     )
