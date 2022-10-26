@@ -18,7 +18,7 @@ export const Login = ({setUserId}) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const res = await axios.post("http://127.0.0.1:5000/auth", {employeeID:employeeID,password:password})
+            const res = await axios.post("http://127.0.0.1:5000/auth",{employeeID:employeeID,password:password})
             setUserId(res.data.employeeID)
             navigate(`/${res.data.employeeID}admin`)
 
