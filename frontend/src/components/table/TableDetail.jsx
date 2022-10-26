@@ -23,10 +23,10 @@ export const TableDetail = ({orderList}) => {
     },[])
 
     return (
-        <div className="table-bottom">
-            <span className='table-name'>{`Table ${orderList.table}`}</span>
+        <div className="table-bottom table-detail-bottom w-1/2 my-0 mx-auto">
+            <span className='table-name table-detail-name'>{`Table ${orderList.table}`}</span>
             <div className="order-container">
-                <div className="order-info">
+                <div className="order-info flex flex-col rounded-2xl my-5">
                     {orderList.orders.map(order => (
                         Object.entries(order).map(([name,values]) => (
                         <OrderList
@@ -37,10 +37,10 @@ export const TableDetail = ({orderList}) => {
                         ))
                     ))}
                 </div>
-                <div className="order-info">
+                <div className="order-info mb-4">
                     <OrderSummary subtotal={subtotal} tax={tax} total={total}/>
                 </div>
-                <div className="order-buttons">
+                <div className="order-buttons flex flex-col items-center justify-center mt-6">
                     <button>Update Order</button>
                     <button>Print Bill</button>
                 </div>

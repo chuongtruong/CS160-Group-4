@@ -8,7 +8,7 @@ export const Register = () => {
     const navigate = useNavigate();
 
     const [email,setEmail] = useState("");
-    const [employeeID, setEmployeeID] = useState("");
+    const [username, setUsername] = useState("");
     const [password,setPassword] = useState("");
     const [confirmPass,setConfirmPass] = useState("");
     const [errors,setErrors] = useState({});
@@ -19,11 +19,12 @@ export const Register = () => {
             event.preventDefault();
             if(password === confirmPass) {
                 try {
-                    // form user data
-                    const res = await axios.post("http://127.0.0.1:5000/registration",{employeeID:employeeID,password:password})
+                    const res = await axios.post("http://127.0.0.1:5000/registration",{employeeID:username,password:password})
+                    console.log(res)
                     navigate('/login')
         
                 } catch(err) {
+                    console.error(err);
                     setErrors(err?.response?.data || {});
                 }
             } else {
@@ -46,9 +47,9 @@ export const Register = () => {
                     />
                     <InputGroup
                         placeholder='Employee ID'
-                        value={employeeID}
-                        setValue={setEmployeeID}
-                        error={errors.employeeID}
+                        value={username}
+                        setValue={setUsername}
+                        error={errors.username}
                         type="text"
                     />
                     <InputGroup
