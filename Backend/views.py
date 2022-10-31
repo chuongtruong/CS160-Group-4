@@ -236,13 +236,14 @@ def init(app, mysql, socketio):
         
         get_all_items_by_table_id_querry = f"""
             SELECT 
+                Photos.url,
                 item_name,
                 quantity,
                 ROUND(item_price * quantity, 2) as total
             FROM Orders
             JOIN Items ON Orders.item_ID = Items.ID
-            WHERE Orders.table_ID = {table_id}
-            
+            JOIN Photos ON Photos.ID = Items.photoID
+            WHERE Orders.table_ID = '{table_id}'
             ;
         """
         try:
@@ -251,9 +252,11 @@ def init(app, mysql, socketio):
             print(result)
             json_data = []
             for i in result:
-                item = {'name':i[0],
-                    'quantity':i[1],
-                    'total': i[2]
+                item = {
+                    'url':i[0],
+                    'name': i[1],
+                    'quantity':i[2],
+                    'total': i[3]
                 }
                 json_data.append(item)
 
