@@ -131,7 +131,8 @@ def init(app, mysql, socketio):
                 I.item_quantity,
                 I.calories,
                 P.url,
-                C.name
+                C.name,
+                I.id
             FROM Items I
             JOIN Photos P ON I.photoID=P.ID
             JOIN Categories C ON I.categoryID=C.ID
@@ -152,7 +153,8 @@ def init(app, mysql, socketio):
                 'quantity':i[3],
                 'calories':i[4],
                 'url':i[5],
-                'category':i[6]
+                'category':i[6],
+                'item_Id': i[7]
             }
 
             json_data.append(item)
@@ -161,6 +163,22 @@ def init(app, mysql, socketio):
     #CREATE A NEW ORDER
     @app.route('/t=<table_id>/create', methods=['GET','POST'])
     def createOrder(table_id):
+        # endpoint_url = 'localhost:5000/t={table_id}/create'
+
+
+        [
+            {
+                table_id,
+                item_id,
+                quantity
+            },
+            {
+
+            },
+            {
+                
+            }
+        ]
        
         #check if table_id is valid
         if not table_id: return abort(404, description="Missing table id in the request.")
