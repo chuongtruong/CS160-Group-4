@@ -164,8 +164,7 @@ def init(app, mysql, socketio):
     @app.route('/t=<table_id>/create', methods=['GET','POST'])
     def createOrder(table_id):
         # endpoint_url = 'localhost:5000/t={table_id}/create'
-
-
+        """
         [
             {
                 table_id,
@@ -179,6 +178,7 @@ def init(app, mysql, socketio):
                 
             }
         ]
+        """
        
         #check if table_id is valid
         if not table_id: return abort(404, description="Missing table id in the request.")
