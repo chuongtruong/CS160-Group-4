@@ -3,34 +3,36 @@ import { AdminMid } from '../components/admin/AdminMid'
 import { Navbar } from '../components/navbar/Navbar'
 import { ListItems } from '../components/admin/ListItems'
 import { useParams } from 'react-router-dom'
-import { menu } from '../components/Data'
 import axios from 'axios'
 
 export const Admin = () => {
   const {id} = useParams()
   const [category,setCategory] = useState("Main")
-  const [items,setItems] = useState(menu)
+  const [items,setItems] = useState()
   const [orderNum,setOrderNum] = useState(0)
   const [customerItems,setCustomerItmes] = useState([])
 
+  useEffect(() => {
+    const getAllMenus = async () => {
+      try {
+        const res = await axios.get("http://127.0.0.1:5000/menu")
+        setItems(res.data)
+      } catch(err) {
+        console.log(err)
+      }
+    }
 
-  // useEffect(() => {
-  //   const getAllMenus = async () => {
-  //     try {
-  //       const res = await axios.get("http://127.0.0.1:5000/menu")
-  //       setItems(res.data)
-  //     } catch(err) {
-  //       console.log(err)
-  //     }
-  //   }
-
-  //   getAllMenus()
-  // },[])
+    getAllMenus()
+  },[])
 
 
   useEffect(() => {
     setItems(category === "Main" ? items : items.filter((item) => item.category === category))
   },[category])
+
+  useEffect(()=> {
+    window.sessionStorage.setItem("item",JSON.stringify(customerItems))
+  },[customerItems])
 
   return (
     <>
@@ -38,7 +40,7 @@ export const Admin = () => {
         <Navbar orderNum={orderNum} id={id}/>
         <AdminMid setCategory={setCategory}/>
       </div>
-      <div className="table-bottom admin-bottom w-1/2 mt-10 mx-auto">
+         <div className="table-bottom admin-bottom w-1/2 mt-10 mx-auto">
           {items?.map((item) => (
             <ListItems
               key={item.id}
