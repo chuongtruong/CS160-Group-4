@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import {io} from 'socket.io-client'
 
 function Confirm() {
   const Ref = useRef(null);
@@ -53,9 +54,40 @@ function Confirm() {
   //   clearTimer(getDeadTime());
   // }
 
+
+
+
+
+  /////Test Code
+
+  const socket = io.connect("http://127.0.0.1:5000")
+
+
+    useEffect(()=>{socket.on("frontend", (data)=>{
+    //add code to add item to the cart after receiving event
+        console.log("debug client")
+       console.log(data)
+    })},[socket])
+
+
   function handleClick() {
-    alert("---");
+
+    console.log("debug click")
+    socket.emit("backend", {name:"Hello from client"})
+
+    //alert("---");
   }
+
+
+  ///Test code
+
+
+
+
+
+
+
+
 
   return (
     <div className="Confirm">
@@ -64,7 +96,7 @@ function Confirm() {
       <h2 text-align center>
         {timer}
       </h2>
-      {/* <button handClick={handleClick}>Go back to home</button> */}
+       <button onClick={handleClick}>Go back to home</button>
     </div>
   );
 }

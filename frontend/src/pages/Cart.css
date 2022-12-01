@@ -29,10 +29,11 @@ a{
     flex:2;
 }
 .block{
-    background-color: #e0e0e0;
+    background-color: #ffffff;
     padding:1rem;
     margin: 0.5rem;
     border-radius: 0.5rem;
+    box-shadow: 3px 0px 20px #D1D1D1;
 }
 .row.center{
     align-items: center;

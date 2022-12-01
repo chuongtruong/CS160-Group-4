@@ -4,8 +4,10 @@ from flask_cors import cross_origin
 import json, hashlib, secrets
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
 
+
 def init(app, mysql, socketio):
     @app.route('/', methods=['GET', 'POST'])
+    @cross_origin(supports_credentials=True)
     def index():
         if request.method == 'POST':
             # Fetch Form Data
@@ -23,6 +25,53 @@ def init(app, mysql, socketio):
             return 'success'
         
         return render_template('index.html')
+
+    @app.route('/t=<table_id>/create2', methods=['GET', 'POST'])
+    @cross_origin(supports_credentials=True)
+    def createOrder2(table_id):
+
+        # check if table_id is valid
+        if not table_id: return abort(404,description="Missing table id in the request.")
+
+        cur = mysql.connection.cursor()
+        check_id_querry = f"SELECT EXISTS(SELECT * FROM Restaurant_Table WHERE ID='{table_id}');"
+        cur.execute(check_id_querry)
+        result = cur.fetchall()
+
+        if (result[0][0] == 0): return abort(404,description="Invalid table ID")
+
+        if request.method == 'POST':
+
+            get_a_new_order_no_querry = f"SELECT order_no FROM Orders ORDER BY order_no DESC LIMIT 1;"
+
+            cur.execute(get_a_new_order_no_querry)
+            result = cur.fetchall()
+            new_order_no = result[0][0] + 1
+            cur.close()
+
+            data = json.loads(request.data)
+
+            item_id_list, quantity_list = [], []
+            for key in data.keys():
+                item_id_list.append(int(key))
+                quantity_list.append(data[key]['quantity'])
+
+            create_a_new_order_querry = "INSERT INTO Orders(item_id, quantity, table_id, order_no)\n VALUE"
+            for item_id, quantity in zip(item_id_list, quantity_list):
+                tmp_sub_querry = f'({item_id}, {quantity}, {table_id}, {new_order_no}),'
+                create_a_new_order_querry += '\n   ' + tmp_sub_querry
+
+            create_a_new_order_querry = create_a_new_order_querry[:-1] + '\n;'
+
+            try:
+                new_cur = mysql.connection.cursor()
+                new_cur.execute(create_a_new_order_querry)
+                mysql.connection.commit()
+                new_cur.close()
+                data = {'order_no': f'{new_order_no}', 'code': 'SUCCESS'}
+                return make_response(jsonify(data), 201)
+            except Exception as e:
+                return abort(404, description=f'Error. {e}')
     
     @app.route("/auth", methods=['POST', 'GET'])
     @cross_origin(supports_credentials=True)
@@ -71,6 +120,7 @@ def init(app, mysql, socketio):
         return {"response": "success"}
 
     @app.route('/users')
+    @cross_origin(supports_credentials=True)
     def users():
         cur = mysql.connection.cursor()
         result = cur.execute("SELECT * FROM users")
@@ -80,6 +130,7 @@ def init(app, mysql, socketio):
 
     # Get all categories
     @app.route('/categories', methods=['GET'])
+    @cross_origin(supports_credentials=True)
     def getAllCategories():
         cur = mysql.connection.cursor()
         querry = "SELECT * FROM Categories"
@@ -93,6 +144,7 @@ def init(app, mysql, socketio):
     # Get all tables, isOccupied = 1 means True, isOccupied = 0 means False
     @app.route('/tables/', defaults={'isOccupied': 2}, methods=['GET'])
     @app.route('/tables/<isOccupied>', methods=['GET'])
+    @cross_origin(supports_credentials=True)
     def getAllTables(isOccupied):
         cur = mysql.connection.cursor()
         querry = """
@@ -122,6 +174,7 @@ def init(app, mysql, socketio):
     # Get all items from Items table
     @app.route('/menu', methods=['GET'])
     def getAllItems():
+        print("sanity check")
         cur = mysql.connection.cursor()
         querry = """
             SELECT 
@@ -131,7 +184,8 @@ def init(app, mysql, socketio):
                 I.item_quantity,
                 I.calories,
                 P.url,
-                C.name
+                C.name,
+                I.id
             FROM Items I
             JOIN Photos P ON I.photoID=P.ID
             JOIN Categories C ON I.categoryID=C.ID
@@ -152,7 +206,8 @@ def init(app, mysql, socketio):
                 'quantity':i[3],
                 'calories':i[4],
                 'url':i[5],
-                'category':i[6]
+                'category':i[6],
+                'item_Id':i[7]
             }
 
             json_data.append(item)
@@ -160,6 +215,7 @@ def init(app, mysql, socketio):
     
     #CREATE A NEW ORDER
     @app.route('/t=<table_id>/create', methods=['GET','POST'])
+    @cross_origin(supports_credentials=True)
     def createOrder(table_id):
        
         #check if table_id is valid
@@ -204,6 +260,7 @@ def init(app, mysql, socketio):
     
     #UPDATE AN EXISTING ORDER
     @app.route('/t=<table_id>/update', methods=['PATCH'])
+    @cross_origin(supports_credentials=True)
     def updateAnOrder(table_id):
         if not table_id: return abort(404, description="Missing table id in the request.")
 
@@ -218,6 +275,7 @@ def init(app, mysql, socketio):
 
     #Get all items from a specific table_id
     @app.route('/t=<table_id>/getAllItems', methods=['GET','POST'])
+    @cross_origin(supports_credentials=True)
     def getAllItemsByTableId(table_id):
         cur = mysql.connection.cursor()
 
@@ -265,6 +323,7 @@ def init(app, mysql, socketio):
             return abort(404, description=f'Error getting items by a specific table ID, {e}')
 
     @socketio.on('message')
+    @cross_origin(supports_credentials=True)
     def message(data):
         print(f'\n\n{data}\n\n')
         send("I am the server")
@@ -279,9 +338,29 @@ def init(app, mysql, socketio):
     #   }
     # }
     cart_history = {}
+    #
+    # @socketio.on('join')
+    # def on_join(data):
+    #     table = data['table']
+    #     items = data['item']
+    #     cart_history[table]
+    #
+    # @socketio.on('backend')
+    # def test(data):
+    #     my_dict = {}
+    #     my_dict["name"] = "Hello from backend"
+    #     print(data)
+    #     emit("frontend", my_dict)
+    #
+    # @socketio.on("add_item")
+    # def add_item(data):
+    #     print("***********inside add")
+    #     emit("added_item", data)
+    #
+    # @socketio.on("remove_item")
+    # def remove_item(data):
+    #     print("Inside remove")
+    #     emit("removed_item", data)
 
-    @socketio.on('join')
-    def on_join(data):
-        table = data['table']
-        items = data['item']
-        cart_history[table]
+
+
